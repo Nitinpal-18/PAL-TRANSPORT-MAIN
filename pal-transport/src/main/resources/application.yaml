@@ -1,0 +1,142 @@
+spring:
+  application:
+    name: pal-transport
+  properties:
+    images:
+      path: "src/main/resources/static/images/"
+      url: "http://localhost:8080/"
+
+  datasource:
+    url: jdbc:postgresql://ep-long-block-a89uyizk-pooler.eastus2.azure.neon.tech/neondb?sslmode=require
+    username: neondb_owner
+    password: npg_WxGBoAH28IaJ
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: srsingh9969@gmail.com
+    password: lquwvlkxnflvyasu
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# Enhanced Security Configuration (Phase 2)
+app:
+  security:
+    jwt:
+      # Change this in production! Use a strong secret key
+      secret: "your-256-bit-secret-key-here-change-in-production-environment"
+      expiration-ms: 86400000  # 24 hours
+      refresh-expiration-ms: 604800000  # 7 days
+      issuer: "pal-transport"
+      audience: "pal-transport-users"
+    google-oauth:
+      client-id: "4536067250-cruj6vbtlhhdvrktova725fssla3k5hu.apps.googleusercontent.com"
+      client-secret: "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"
+      redirect-uri: "http://localhost:8081/auth/callback"
+      scope: "openid email profile"
+    cors:
+      allowed-origins:
+        - "http://localhost:8080"
+        - "http://localhost:8081"
+        - "http://localhost:3000"
+        - "http://localhost:5173"
+      allowed-methods:
+        - "GET"
+        - "POST"
+        - "PUT"
+        - "DELETE"
+        - "OPTIONS"
+      allowed-headers:
+        - "*"
+      allow-credentials: true
+      max-age: 3600  # 1 hour
+    # Advanced Security Configuration (Phase 5)
+    rate-limit:
+      default-settings:
+        requests: 100
+        window-minutes: 1
+        enabled: true
+      endpoints:
+        auth-login:
+          requests: 5
+          window-minutes: 1
+          enabled: true
+        auth-oauth:
+          requests: 10
+          window-minutes: 1
+          enabled: true
+        auth-refresh:
+          requests: 20
+          window-minutes: 1
+          enabled: true
+        security-audit:
+          requests: 50
+          window-minutes: 1
+          enabled: true
+        trucks-create:
+          requests: 10
+          window-minutes: 1
+          enabled: true
+        trucks-update:
+          requests: 20
+          window-minutes: 1
+          enabled: true
+    monitoring:
+      enabled: true
+      alert-thresholds:
+        failed-logins-per-hour: 10
+        rate-limit-violations-per-hour: 20
+        unauthorized-access-per-hour: 5
+      real-time-alerts:
+        enabled: true
+        critical-alerts: true
+        high-priority-alerts: true
+        medium-priority-alerts: true
+        low-priority-alerts: false
+
+transport:
+  location-api-url: "https://nominatim.openstreetmap.org/search?format=json&q="
+
+bill:
+  from:
+    companyName: "ANKIT TRANSPORTS & PARCEL SERVICES"
+    address: "Shop no-40 Pooja Enclave Ganesh Nagar, Charkop Industrial estate Kandivali West, Mumbai 400067"
+    phone: "8655073150,9324686056"
+    bankDetails: "ANKIT TRANSPORT AND PARCEL SERVICES, ACOUNT NO:015011200000976, IFSC CODE:MCBL0960015"
+
+distance:
+  marginPercent: 20
+  minMargin: 10
+  maxMargin: 50
+  # Free tier - no API key required for basic usage
+  apiKey: ""
+  apiUrl: https://api.openrouteservice.org/v2/directions/driving-car/json
+
+scheduler:
+  # Frequency in minutes for status updates
+  truckStatusFrequency: 10
+  driverStatusFrequency: 10
+  enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    com.pal_transport: INFO
+    org.springframework.security: DEBUG
+    com.pal_transport.application.service.SecurityService: DEBUG
+    com.pal_transport.application.service.SecurityAuditService: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: "logs/pal-transport.log"
+    max-size: "10MB"
+    max-history: 30
+
